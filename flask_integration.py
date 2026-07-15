@@ -2,18 +2,18 @@
 Flask integration for i18n.
 
 Usage:
-    from i18n.flask_integration import I18n
+    from i18n import I18n
+    from i18n.flask_integration import I18nExtension
 
     i18n = I18n(default='ru')
     i18n.load_dir('i18n/translations')
-    i18n.init_app(app)
+    I18nExtension(i18n)(app)
 
     In templates: {{ t('key') }}
-    In routes:    t('key')
-    Switch lang:  POST /set-lang  (form field: lang)
+    In routes:    i18n.t('key')
+    Switch lang:  GET ?lang=en (session-persisted)
 """
-from functools import wraps
-from flask import Flask, session, request, g
+from flask import Flask, session, request
 
 
 def I18nExtension(i18n_instance):

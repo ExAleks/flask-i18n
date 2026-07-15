@@ -23,10 +23,12 @@ class I18n:
     def load(self, path: str) -> None:
         with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
-        lang = data.pop('_lang', os.path.splitext(os.path.basename(path))[0])
+        lang = data.get('_lang', os.path.splitext(os.path.basename(path))[0])
         self._translations[lang] = data
 
     def load_dir(self, directory: str) -> None:
+        if not os.path.isdir(directory):
+            return
         for name in os.listdir(directory):
             if name.endswith('.json'):
                 self.load(os.path.join(directory, name))
@@ -51,6 +53,8 @@ class I18n:
                     return key
             if val is None:
                 return key
+        if not isinstance(val, str):
+            return str(val)
         if kwargs:
             try:
                 return val.format(**kwargs)
